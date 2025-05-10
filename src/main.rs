@@ -109,6 +109,7 @@ impl App {
 
             terminal.draw(|frame| self.render_frame(frame))?;
 
+            // TODO: create new thread as to not block the UI when sleeping the thread
             if encounter_process(&self.engine, &mut self.encounter_state, window).is_err() {
                 try_to_restart(terminal)?;
             }

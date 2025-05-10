@@ -95,14 +95,32 @@ pub fn game_exist(w: &&Window) -> bool {
 
 // Weird edge case where the game title is in Cyrillic in some moments. Often or always when the user is passed the login screen.
 fn convert_cyrillic_string(input: &str) -> String {
-    input.chars().map(|c| match c {
-        'А' => 'A', 'В' => 'B', 'Е' => 'E', 'К' => 'K',
-        'М' => 'M', 'Н' => 'H', 'О' => 'O', 'Р' => 'P',
-        'С' => 'S', 'Т' => 'T', 'У' => 'Y', 'Х' => 'X',
-        'а' => 'a', 'е' => 'e', 'о' => 'o', 'р' => 'p',
-        'с' => 's', 'у' => 'y', 'х' => 'x', 'м' => 'm',
-        other => other, // Leave non-Cyrillic characters unchanged
-    }).collect()
+    input
+        .chars()
+        .map(|c| match c {
+            'А' => 'A',
+            'В' => 'B',
+            'Е' => 'E',
+            'К' => 'K',
+            'М' => 'M',
+            'Н' => 'H',
+            'О' => 'O',
+            'Р' => 'P',
+            'С' => 'S',
+            'Т' => 'T',
+            'У' => 'Y',
+            'Х' => 'X',
+            'а' => 'a',
+            'е' => 'e',
+            'о' => 'o',
+            'р' => 'p',
+            'с' => 's',
+            'у' => 'y',
+            'х' => 'x',
+            'м' => 'm',
+            other => other, // Leave non-Cyrillic characters unchanged
+        })
+        .collect()
 }
 
 pub fn get_current_working_dir() -> (String, String) {
@@ -146,11 +164,18 @@ fn get_mons(engine: &OcrEngine, data: RgbImage) -> Result<(Vec<String>, bool), B
             lure_on = true;
         }
 
-        if line.contains("lv.") || line.contains("nv.") || line.contains("niv.") {
+        if line.contains("lv.")
+            || line.contains("nv.")
+            || line.contains("niv.")
+            || line.contains("lvl.")
+        {
             line.split_whitespace()
                 .collect::<Vec<_>>()
                 .windows(2)
-                .filter(|w| (w[1] == "lv." || w[1] == "nv." || w[1] == "niv.") && w[0].len() > 1)
+                .filter(|w| {
+                    (w[1] == "lv." || w[1] == "nv." || w[1] == "niv.")
+                        || w[1] == "lvl." && w[0].len() > 1
+                })
                 .for_each(|w| mons.push(w[0].to_string()));
         }
     }
